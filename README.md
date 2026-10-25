@@ -1,4 +1,4 @@
-# PDF Edit
+# Éditeur PDF local
 
 Éditeur de PDF local : on dépose un PDF, on clique sur un texte pour le réécrire **avec la même police**,
 on déplace / supprime des éléments, puis on télécharge le PDF modifié. Rien ne quitte le Mac.
