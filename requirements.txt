@@ -1,0 +1,8 @@
+pymupdf>=1.26
+fastapi
+uvicorn[standard]
+python-multipart
+fonttools
+requests
+numpy
+pyobjc-framework-Vision

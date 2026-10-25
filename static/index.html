@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDF Edit</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<!-- Écran d'accueil -->
+<section id="start">
+  <div class="start-card">
+    <h1>PDF Edit</h1>
+    <p class="sub">Modifie un PDF comme un document Word, avec ses polices d'origine.</p>
+    <label id="drop" class="drop">
+      <input id="file" type="file" accept="application/pdf,.pdf" hidden>
+      <svg viewBox="0 0 24 24" width="40" height="40"><path d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <strong>Dépose ton PDF ici</strong>
+      <span>ou clique pour le choisir</span>
+    </label>
+    <button id="resume" class="btn ghost" hidden></button>
+  </div>
+</section>
+
+<!-- Éditeur -->
+<section id="editor" hidden>
+  <header class="bar main">
+    <div class="group">
+      <button class="btn icon" id="btn-new" title="Ouvrir un autre PDF"><svg viewBox="0 0 24 24"><path d="M4 7a2 2 0 012-2h4l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2z"/></svg></button>
+      <span id="docname" class="docname"></span>
+    </div>
+    <div class="group tools" id="tools">
+      <button class="btn tool active" data-tool="select" title="Sélectionner / modifier (V)"><svg viewBox="0 0 24 24"><path d="M5 3l14 8-6 2-3 6z"/></svg><span>Modifier</span></button>
+      <button class="btn tool" data-tool="text" title="Ajouter du texte (T)"><svg viewBox="0 0 24 24"><path d="M5 6V4h14v2M12 4v16M9 20h6"/></svg><span>Texte</span></button>
+      <button class="btn tool" data-tool="image" title="Ajouter une image"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-8 8"/></svg><span>Image</span></button>
+      <span class="sep"></span>
+      <button class="btn tool" data-tool="rect" title="Rectangle"><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="1"/></svg></button>
+      <button class="btn tool" data-tool="ellipse" title="Ellipse"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="8" ry="6"/></svg></button>
+      <button class="btn tool" data-tool="line" title="Ligne"><svg viewBox="0 0 24 24"><path d="M5 19L19 5"/></svg></button>
+      <button class="btn tool" data-tool="highlight" title="Surligner"><svg viewBox="0 0 24 24"><path d="M9 15l-4 4h6l1.5-1.5M9 15l7.5-7.5 3 3L12 18M9 15l3 3"/></svg></button>
+      <button class="btn tool" data-tool="whiteout" title="Masquer (rectangle blanc)"><svg viewBox="0 0 24 24"><path d="M7 21h10M5.5 13.5l6-6 5 5-6 6H8z"/><path d="M11.5 7.5l3-3 5 5-3 3"/></svg></button>
+    </div>
+    <div class="group">
+      <button class="btn icon" id="btn-undo" title="Annuler (⌘Z)"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 010 12h-3"/></svg></button>
+      <button class="btn icon" id="btn-redo" title="Rétablir (⇧⌘Z)"><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 000 12h3"/></svg></button>
+      <span class="sep"></span>
+      <button class="btn icon" id="zoom-out" title="Dézoomer"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button>
+      <button class="btn zoomval" id="zoom-val" title="Ajuster à la largeur">125%</button>
+      <button class="btn icon" id="zoom-in" title="Zoomer"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+      <span class="sep"></span>
+      <button class="btn primary" id="btn-download"><svg viewBox="0 0 24 24"><path d="M12 4v12m0 0l-4-4m4 4l4-4M5 20h14"/></svg><span>Télécharger le PDF</span></button>
+    </div>
+  </header>
+
+  <div class="bar ctx" id="ctx">
+    <div class="ctx-group" id="ctx-text">
+      <select id="f-family" title="Police"></select>
+      <div class="num"><input id="f-size" type="number" min="1" max="400" step="0.5" title="Taille (pt)"><span>pt</span></div>
+      <label class="color" title="Couleur du texte"><input id="f-color" type="color"><span class="swatch"></span></label>
+      <button class="btn icon toggle" id="f-bold" title="Gras (⌘B)"><b>G</b></button>
+      <button class="btn icon toggle" id="f-italic" title="Italique (⌘I)"><i>I</i></button>
+      <span class="sep"></span>
+      <button class="btn icon toggle" data-align="left" title="Aligner à gauche"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 10h10M4 14h16M4 18h10"/></svg></button>
+      <button class="btn icon toggle" data-align="center" title="Centrer"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 10h10M4 14h16M7 18h10"/></svg></button>
+      <button class="btn icon toggle" data-align="right" title="Aligner à droite"><svg viewBox="0 0 24 24"><path d="M4 6h16M10 10h10M4 14h16M10 18h10"/></svg></button>
+      <button class="btn icon toggle" data-align="justify" title="Justifier"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg></button>
+      <div class="num" title="Interligne (pt)"><svg viewBox="0 0 24 24" class="mini"><path d="M10 6h10M10 12h10M10 18h10M5 4v16M3 6l2-2 2 2M3 18l2 2 2-2"/></svg><input id="f-lh" type="number" min="1" max="400" step="0.5"></div>
+    </div>
+    <div class="ctx-group" id="ctx-shape">
+      <label class="lbl">Contour</label>
+      <label class="color" title="Couleur du contour"><input id="s-stroke" type="color"><span class="swatch"></span></label>
+      <button class="btn small toggle" id="s-stroke-none" title="Sans contour">Aucun</button>
+      <label class="lbl">Fond</label>
+      <label class="color" title="Couleur de fond"><input id="s-fill" type="color"><span class="swatch"></span></label>
+      <button class="btn small toggle" id="s-fill-none" title="Sans fond">Aucun</button>
+      <label class="lbl">Épaisseur</label>
+      <div class="num"><input id="s-width" type="number" min="0.25" max="50" step="0.25"><span>pt</span></div>
+      <label class="lbl">Opacité</label>
+      <input id="s-opacity" type="range" min="0.05" max="1" step="0.05">
+    </div>
+    <div class="ctx-group" id="ctx-hint"><span class="hint">Clique sur un texte pour le modifier, ou sur une image pour la déplacer.</span></div>
+    <div class="ctx-right">
+      <button class="btn small danger" id="btn-delete" title="Supprimer (Suppr)"><svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg><span>Supprimer</span></button>
+    </div>
+  </div>
+
+  <main id="viewer"><div id="pages"></div></main>
+  <input id="img-file" type="file" accept="image/*" hidden>
+</section>
+
+<div id="busy" hidden><div class="spinner"></div><div id="busy-msg">Analyse du PDF…</div></div>
+<div id="toast" hidden></div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
