@@ -1,5 +1,7 @@
 # Éditeur PDF local
 
+![Édition d'un paragraphe avec sa police d'origine](docs/apercu.jpg)
+
 Éditeur de PDF local : on dépose un PDF, on clique sur un texte pour le réécrire **avec la même police**,
 on déplace / supprime des éléments, puis on télécharge le PDF modifié. Rien ne quitte le Mac.
 
